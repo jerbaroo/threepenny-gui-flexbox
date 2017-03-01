@@ -1,4 +1,11 @@
-module Graphics.UI.Threepenny.Ext.Flexbox where
+module Graphics.UI.Threepenny.Ext.Flexbox (
+  -- Core functions.
+  ChildProps (..), ParentProps (..), defaultParentProps, defaultChildProps,
+  flexbox,
+
+  -- Helper functions.
+  column, row
+  ) where
 
 import qualified Clay.Common                 as CC
 import           Clay.Display                (Display)
@@ -13,7 +20,7 @@ import           Clay.Size                   (LengthUnit, Size)
 import           Clay.Stylesheet             (Rule (Property), runS)
 import           Data.Text                   (unpack)
 import qualified Graphics.UI.Threepenny      as UI
-import           Graphics.UI.Threepenny.Core
+import           Graphics.UI.Threepenny.Core hiding (column, row)
 
 -- |Convert to Threepenny style.
 class ToStyle a where
@@ -90,21 +97,23 @@ setProps :: ToStyle a => UI Element -> a -> UI Element
 setProps el props = el # set UI.style (toStyle props)
 
 -- |Attach elements to a parent element, with given Flexbox properties applied.
-attach ::
+flexbox ::
      UI Element -> ParentProps  -- Parent and its Flexbox properties
   -> [(UI Element, ChildProps)] -- Children and respective Flexbox properties
   -> UI Element                 -- Parent with attached children
-attach p pProps cs = do
+flexbox p pProps cs = do
   p'  <- setProps p pProps
   cs' <- mapM (uncurry setProps) cs
   element p' #+ map element cs'
 
--- |Attach elements to a parent element with default Flexbox properties.
-row :: UI Element -> [UI Element] -> UI Element
-row p cs = attach p defaultParentProps $ zip cs $ repeat defaultChildProps
+-- Helper functions ------------------------------------------------------------
 
 -- |Attach elements to a parent element with flex-direction column.
 column :: UI Element -> [UI Element] -> UI Element
-column p cs = attach p defaultParentProps { pFlexDirection = CF.column } $
+column p cs = flexbox p defaultParentProps { pFlexDirection = CF.column } $
   zip cs $ repeat defaultChildProps
+
+-- |Attach elements to a parent element with default Flexbox properties.
+row :: UI Element -> [UI Element] -> UI Element
+row p cs = flexbox p defaultParentProps $ zip cs $ repeat defaultChildProps
 
