@@ -1,4 +1,4 @@
-* Threepenny-gui Flexbox
+* Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]]
   Flexbox layouts for Threepenny-gui.
 
   This library was written following the wonderful
