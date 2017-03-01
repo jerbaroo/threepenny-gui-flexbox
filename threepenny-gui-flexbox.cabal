@@ -1,5 +1,5 @@
 name:                threepenny-gui-flexbox
-version:             0.2.0.0
+version:             0.2.0.1
 synopsis:            Flexbox layouts for Threepenny-gui.
 description:         See the README at https://github.com/barischj/threepenny-gui-flexbox
 homepage:            https://github.com/barischj/threepenny-gui-flexbox
@@ -15,8 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib
-                     , Graphics.UI.Threepenny.Ext.Flexbox
+  exposed-modules:     Graphics.UI.Threepenny.Ext.Flexbox
   build-depends:       base >= 4.7 && < 5
                      , clay
                      , text
