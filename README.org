@@ -23,7 +23,7 @@
   defaultChildProps { cFlexGrow = 2 }
   #+END_SRC
   
-  What you'll propbably use a lot is `flexbox`, which you provide with a parent
+  What you'll propbably use a lot is ~flexbox~, which you provide with a parent
   element and properties, and a list of children elements and their respective
   properties.
 
