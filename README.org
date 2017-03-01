@@ -1,2 +1,8 @@
 * Threepenny-Flexbox
-  A package for writing Flexbox layouts for a [[http://hackage.haskell.org/package/threepenny-gui-0.7.0.1][threepenny-gui]] app.
+  Flexbox layouts for Threepenny-gui
+
+  This library was written following the wonderful guide to Flexbox at:
+  https://css-tricks.com/snippets/css/a-guide-to-flexbox
+
+
+

@@ -1,11 +1,11 @@
-name:                threepenny-flexbox
+name:                threepenny-gui-flexbox
 version:             0.1.0.0
-homepage:            https://github.com/githubuser/threepenny-flexbox#readme
+homepage:            https://github.com/barischj/threepenny-gui-flexbox
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2017 Author name here
+author:              Jeremy Barisch-Rooney
+maintainer:          barischj@tcd.ie
+copyright:           2017 Jeremy Barisch-Rooney
 category:            Web
 build-type:          Simple
 extra-source-files:  README.org
@@ -26,18 +26,10 @@ executable threepenny-flexbox-exe
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
-                     , threepenny-flexbox
-  default-language:    Haskell2010
-
-test-suite threepenny-flexbox-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Spec.hs
-  build-depends:       base
-                     , threepenny-flexbox
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+                     , threepenny-gui
+                     , threepenny-gui-flexbox
   default-language:    Haskell2010
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/threepenny-flexbox
+  location: https://github.com/barischj/threepenny-gui-flexbox
