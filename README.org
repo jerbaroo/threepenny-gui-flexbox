@@ -1,0 +1,2 @@
+* Threepenny-Flexbox
+  A package for writing Flexbox layouts for a [[http://hackage.haskell.org/package/threepenny-gui-0.7.0.1][threepenny-gui]] app.
