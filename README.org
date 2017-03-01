@@ -1,8 +1,44 @@
 * Threepenny-Flexbox
   Flexbox layouts for Threepenny-gui
 
-  This library was written following the wonderful guide to Flexbox at:
-  https://css-tricks.com/snippets/css/a-guide-to-flexbox
+  This library was written following the wonderful
+  [[https://css-tricks.com/snippets/css/a-guide-to-flexbox][A Complete Guide to
+  Flexbox]] and using the wonderful
+  [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS DSL.
 
+* Usage
+  This library exposes the entire Flexbox API.
 
+  We collect the Flexbox properties that apply to the parent element, things
+  like `flex-direction`, in a `ParentProps` data type.
 
+  We collect the Flexbox properties that apply to the children elements, things
+  like `flex-grow`, in a `ChildProps` data type.
+
+  You can set a property by using the defaults and over-riding a speicific entry
+  using record syntax:
+  
+  #+BEGIN_SRC Haskell
+  defaultChildProps { cFlexGrow = 2 }
+  #+END_SRC
+  
+  What you'll propbably use a lot is `flexbox`, which you provide with a parent
+  element and properties, and a list of children elements and their respective
+  properties.
+
+  The example image above was produced with the below code. It attaches three
+  ~div~ s with text "foo" to the ~body~ in the ratio 1:2:1
+  
+  #+BEGIN_SRC Haskell
+  -- |Example of three divs using a flex-grow ratio of 1:2:1
+  example :: Window -> UI ()
+  example w = void $
+    flexbox (getBody w) defaultParentProps $ [grow 1, grow 2, grow 1]
+
+  -- |Example "foo" div and given flex-grow value.
+  grow :: Int -> (UI Element, ChildProps)
+  grow n = (foo, defaultChildProps { cFlexGrow = n })
+    where foo = UI.div # set UI.text "foo"
+                       # set UI.style [("background-color", "red"),
+                                       ("margin", "8px")]
+  #+END_SRC
