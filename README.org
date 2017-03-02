@@ -1,6 +1,4 @@
-* Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]]
-  [[https://img.shields.io/hackage/v/threepenny-gui-flexbox.svg]]
-  [[https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly]]
+* Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]] [[https://img.shields.io/hackage/v/threepenny-gui-flexbox.svg]] [[https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly?.jpg]]
 
   Flexbox layouts for Threepenny-gui.
 
