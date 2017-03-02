@@ -76,7 +76,7 @@
   #+BEGIN_SRC Haskell
   -- |Convert to Threepenny style.
   class ToStyle a where
-  toStyle :: a -> [(String, String)]
+    toStyle :: a -> [(String, String)]
   #+END_SRC
 
   To save a few more characters you can use ~setProps~ to set the given
