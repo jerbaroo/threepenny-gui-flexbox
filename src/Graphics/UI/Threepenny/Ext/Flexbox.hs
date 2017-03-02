@@ -6,9 +6,9 @@ module Graphics.UI.Threepenny.Ext.Flexbox (
   ChildProps (..), childProps,
 
   -- * Core Functions
-  flexbox, setProps, toStyle,
+  ToStyle, flexbox, setProps, toStyle,
 
-  -- * Helper functions
+  -- * Helper Functions
   column, row
   ) where
 
