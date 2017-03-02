@@ -1,4 +1,7 @@
 * Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]]
+  [[https://img.shields.io/hackage/v/threepenny-gui-flexbox.svg]]
+  [[https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly]]
+
   Flexbox layouts for Threepenny-gui.
 
   This library was written following the wonderful
@@ -7,23 +10,37 @@
   [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS DSL.
 
    [[./example.png]]
+
 * Usage
+
   This library exposes the entire Flexbox API.
 
   We collect the Flexbox properties that apply to the parent element, things
   like ~flex-direction~, in a ~ParentProps~ data type.
 
-  We collect the Flexbox properties that apply to the children elements, things
-  like ~flex-grow~, in a ~ChildProps~ data type.
+  We collect the Flexbox properties that apply to children elements, things like
+  ~flex-grow~, in a ~ChildProps~ data type.
 
-  You can set a property by using the defaults and over-riding a speicific entry
+** Setting Properties
+
+  You can set a property by using the defaults and over-riding a specific entry
   using record syntax:
   
+  *Setting flex-grow: 2;*
   #+BEGIN_SRC Haskell
-  defaultChildProps { cFlexGrow = 2 }
+  childProps { cFlexGrow = 2 }
   #+END_SRC
   
-  What you'll propbably use a lot is ~flexbox~, which you provide with a parent
+  You can use the Clay CSS DSL to set values:
+  
+  *Setting display: inline-flex;*
+  #+BEGIN_SRC Haskell
+  parentProps { pDisplay = Clay.Flexbox.inlineFlex }
+  #+END_SRC
+
+** Example
+
+  What you'll propbably use a lot is ~flexbox~, which you pass a parent
   element and properties, and a list of children elements and their respective
   properties.
 
@@ -35,11 +52,11 @@
   -- |Example of three divs using a flex-grow ratio of 1:2:1.
   example :: Window -> UI ()
   example w = void $
-    flexbox (getBody w) defaultParentProps $ [grow 1, grow 2, grow 1]
+    flexbox (getBody w) parentProps $ [grow 1, grow 2, grow 1]
 
   -- |Example "foo" div and given flex-grow value.
   grow :: Int -> (UI Element, ChildProps)
-  grow n = (foo, defaultChildProps { cFlexGrow = n })
+  grow n = (foo, childProps { cFlexGrow = n })
     where foo = UI.div # set UI.text "foo"
                        # set UI.style [("background-color", "#F89406"),
                                        ("margin", "8px")]

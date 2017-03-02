@@ -1,9 +1,14 @@
 module Graphics.UI.Threepenny.Ext.Flexbox (
-  -- Core functions.
-  ChildProps (..), ParentProps (..), defaultParentProps, defaultChildProps,
-  flexbox,
+  -- * Parent Properties
+  ParentProps (..), parentProps,
 
-  -- Helper functions.
+  -- * Child Properties
+  ChildProps (..), childProps,
+
+  -- * Core Functions
+  flexbox, setProps, toStyle,
+
+  -- * Helper functions
   column, row
   ) where
 
@@ -53,8 +58,8 @@ instance ToStyle ParentProps where
     ]
 
 -- |Default properties for a parent.
-defaultParentProps :: ParentProps
-defaultParentProps = ParentProps {
+parentProps :: ParentProps
+parentProps = ParentProps {
     pDisplay        = CD.flex
   , pFlexDirection  = CF.row
   , pFlexWrap       = CF.nowrap
@@ -83,8 +88,8 @@ instance ToStyle ChildProps where
     ]
 
 -- |Default properties for a child.
-defaultChildProps :: ChildProps
-defaultChildProps = ChildProps {
+childProps :: ChildProps
+childProps = ChildProps {
     cOrder      = 1
   , cFlexGrow   = 0
   , cFlexShrink = 1
@@ -98,22 +103,21 @@ setProps el props = el # set UI.style (toStyle props)
 
 -- |Attach elements to a parent element, with given Flexbox properties applied.
 flexbox ::
-     UI Element -> ParentProps  -- Parent and its Flexbox properties
-  -> [(UI Element, ChildProps)] -- Children and respective Flexbox properties
-  -> UI Element                 -- Parent with attached children
+     UI Element                 -- ^ Parent
+  -> ParentProps                -- ^ Parent Flexbox properties
+  -> [(UI Element, ChildProps)] -- ^ Children and respective Flexbox properties
+  -> UI Element                 -- ^ Parent with attached children
 flexbox p pProps cs = do
   p'  <- setProps p pProps
   cs' <- mapM (uncurry setProps) cs
   element p' #+ map element cs'
 
--- Helper functions ------------------------------------------------------------
-
 -- |Attach elements to a parent element with flex-direction column.
 column :: UI Element -> [UI Element] -> UI Element
-column p cs = flexbox p defaultParentProps { pFlexDirection = CF.column } $
-  zip cs $ repeat defaultChildProps
+column p cs = flexbox p parentProps { pFlexDirection = CF.column } $
+  zip cs $ repeat childProps
 
 -- |Attach elements to a parent element with default Flexbox properties.
 row :: UI Element -> [UI Element] -> UI Element
-row p cs = flexbox p defaultParentProps $ zip cs $ repeat defaultChildProps
+row p cs = flexbox p parentProps $ zip cs $ repeat childProps
 
