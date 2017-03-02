@@ -4,43 +4,47 @@
 
   This library was written following the wonderful
   [[https://css-tricks.com/snippets/css/a-guide-to-flexbox][A Complete Guide to
-  Flexbox]] and using the wonderful
-  [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS DSL.
+  Flexbox]] and using the equally wonderful
+  [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS domain
+  specific language.
 
-   [[./example.png]]
+  [[./example.png]]
 
 * Usage
 
-  This library exposes the entire Flexbox API.
+  Flexbox properties that apply to the parent element, things like
+  ~flex-direction~, are stored in a ~ParentProps~ data type.
 
-  We collect the Flexbox properties that apply to the parent element, things
-  like ~flex-direction~, in a ~ParentProps~ data type.
-
-  We collect the Flexbox properties that apply to children elements, things like
-  ~flex-grow~, in a ~ChildProps~ data type.
+  Flexbox properties that apply to children elements, things like ~flex-grow~,
+  are stored in a ~ChildProps~ data type.
+  
+  For both ~ParentProps~ and ~ChildProps~ we provide standard default values,
+  via the respective functions ~parentProps :: ParentProps~ and ~childProps ::
+  ChildProps~.
 
 ** Setting Properties
 
   You can set a property by using the defaults and over-riding a specific entry
-  using record syntax:
+  using record syntax.
   
-  *Setting flex-grow: 2;*
+  Setting ~flex-grow: 2;~ which is a property for a child element:
   #+BEGIN_SRC Haskell
   childProps { cFlexGrow = 2 }
   #+END_SRC
   
-  You can use the Clay CSS DSL to set values:
+  You can use Clay to set values for some of the more exotic types.
   
-  *Setting display: inline-flex;*
+  Setting ~display: inline-flex;~ which is property for a parent element:
   #+BEGIN_SRC Haskell
   parentProps { pDisplay = Clay.Flexbox.inlineFlex }
   #+END_SRC
 
-** Example
+** Full Example
 
-  What you'll propbably use a lot is ~flexbox~, which you pass a parent
-  element and properties, and a list of children elements and their respective
-  properties.
+  Once you have your properties defined you need to apply them to elements and
+  attach the children to the parent. ~flexbox~ provides this functionality, you
+  need to pass a parent element and respective properties, and a list of
+  children elements and their respective properties.
 
   The example image above was produced with the below code. It attaches three
   ~div~ s with text "foo" to the ~body~ in the ratio 1:2:1. The example can be
@@ -58,4 +62,28 @@
     where foo = UI.div # set UI.text "foo"
                        # set UI.style [("background-color", "#F89406"),
                                        ("margin", "8px")]
+  #+END_SRC
+
+** More Control
+
+  If you don't want to use ~flexbox~ but rather set CSS values on elements
+  yourself you can use the functions ~toStyle~ and ~setProps~.
+
+  ~ParentProps~ and ~ChildProps~ are both an instance of ~ToStyle~, defined
+  below. That means you can convert either parent properties or child properties
+  to a ~[(String, String)]~ which is [[http://hackage.haskell.org/package/threepenny-gui/docs/src/Graphics-UI-Threepenny-Core.html#style][how Threepenny expects CSS]].
+  
+  #+BEGIN_SRC Haskell
+  -- |Convert to Threepenny style.
+  class ToStyle a where
+  toStyle :: a -> [(String, String)]
+  #+END_SRC
+
+  To save a few more characters you can use ~setProps~ to set the given
+  properties on an element.
+
+  #+BEGIN_SRC Haskell
+   -- |Set Flexbox properties on an element.
+  setProps :: ToStyle a => UI Element -> a -> UI Element
+  setProps el props = el # set UI.style (toStyle props)
   #+END_SRC
