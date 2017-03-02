@@ -18,10 +18,12 @@
   Flexbox properties that apply to children elements, things like ~flex-grow~,
   are stored in a ~ChildProps~ data type.
   
-  For both ~ParentProps~ and ~ChildProps~ we provide standard default values,
-  via the respective functions ~parentProps :: ParentProps~ and ~childProps ::
-  ChildProps~.
-
+  For both ~ParentProps~ and ~ChildProps~ we provide the standard defaults through:
+  #+BEGIN_SRC Haskell
+  parentProps :: ParentProps
+  childProps :: ChildProps
+  #+END_SRC
+  
 ** Setting Properties
 
   You can set a property by using the defaults and over-riding a specific entry
