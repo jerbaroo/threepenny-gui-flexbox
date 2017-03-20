@@ -19,9 +19,10 @@
   are stored in a ~ChildProps~ data type.
   
   For both ~ParentProps~ and ~ChildProps~ we provide the standard defaults through:
+
   #+BEGIN_SRC Haskell
-  parentProps :: ParentProps
-  childProps :: ChildProps
+parentProps :: ParentProps
+childProps :: ChildProps
   #+END_SRC
   
 ** Setting Properties
@@ -30,15 +31,17 @@
   using record syntax.
   
   Setting ~flex-grow: 2;~ which is a property for a child element:
+
   #+BEGIN_SRC Haskell
-  childProps { cFlexGrow = 2 }
+childProps { cFlexGrow = 2 }
   #+END_SRC
   
   You can use Clay to set values for some of the more exotic types.
   
   Setting ~display: inline-flex;~ which is property for a parent element:
+  
   #+BEGIN_SRC Haskell
-  parentProps { pDisplay = Clay.Flexbox.inlineFlex }
+parentProps { pDisplay = Clay.Flexbox.inlineFlex }
   #+END_SRC
 
 ** Full Example
@@ -54,16 +57,16 @@
   
   #+BEGIN_SRC Haskell
   -- |Example of three divs using a flex-grow ratio of 1:2:1.
-  example :: Window -> UI ()
-  example w = void $
-    flexbox (getBody w) parentProps $ [grow 1, grow 2, grow 1]
+example :: Window -> UI ()
+example w = void $
+  flexbox (getBody w) parentProps $ [grow 1, grow 2, grow 1]
 
-  -- |Example "foo" div and given flex-grow value.
-  grow :: Int -> (UI Element, ChildProps)
-  grow n = (foo, childProps { cFlexGrow = n })
-    where foo = UI.div # set UI.text "foo"
-                       # set UI.style [("background-color", "#F89406"),
-                                       ("margin", "8px")]
+-- |Example "foo" div and given flex-grow value.
+grow :: Int -> (UI Element, ChildProps)
+grow n = (foo, childProps { cFlexGrow = n })
+  where foo = UI.div # set UI.text "foo"
+                     # set UI.style [("background-color", "#F89406"),
+                                     ("margin", "8px")]
   #+END_SRC
 
 ** More Control
@@ -76,16 +79,13 @@
   to a ~[(String, String)]~ which is [[http://hackage.haskell.org/package/threepenny-gui/docs/src/Graphics-UI-Threepenny-Core.html#style][how Threepenny expects CSS]].
   
   #+BEGIN_SRC Haskell
-  -- |Convert to Threepenny style.
-  class ToStyle a where
-    toStyle :: a -> [(String, String)]
+class ToStyle a where
+toStyle :: a -> [(String, String)]
   #+END_SRC
 
   To save a few more characters you can use ~setProps~ to set the given
   properties on an element.
 
   #+BEGIN_SRC Haskell
-   -- |Set Flexbox properties on an element.
-  setProps :: ToStyle a => UI Element -> a -> UI Element
-  setProps el props = el # set UI.style (toStyle props)
+setProps :: ToStyle a => UI Element -> a -> UI Element
   #+END_SRC
