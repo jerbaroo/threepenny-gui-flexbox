@@ -2,14 +2,17 @@ module Graphics.UI.Threepenny.Ext.Flexbox (
   -- * Parent Properties
   ParentProps (..), parentProps,
 
+  -- ** Parent Property Helpers
+  display, flexDirection, flexWrap, justifyContent, alignItems, aligContent,
+ 
   -- * Child Properties
   ChildProps (..), childProps,
 
-  -- * Core Functions
-  ToStyle, flexbox, setProps, toStyle,
+  -- ** Child Property Helpers
+  order, flexGrow, flexShrink, flexBasis, alignSelf,
 
-  -- * Helper Functions
-  column, row
+  -- * Core Functions
+  ToStyle (..), setProps, flex, flex_p, flex_c, flex_pc 
   ) where
 
 import qualified Clay.Common                 as CC
@@ -68,6 +71,13 @@ parentProps = ParentProps {
   , pAlignContent   = CF.stretch
 }
 
+display        x = parentProps { pDisplay        = x }
+flexDirection  x = parentProps { pFlexDirection  = x }
+flexWrap       x = parentProps { pFlexWrap       = x }
+justifyContent x = parentProps { pJustifyContent = x }
+alignItems     x = parentProps { pAlignItems     = x }
+aligContent    x = parentProps { pAlignContent   = x }
+
 -- |Properties for a child.
 data ChildProps = ChildProps {
     cOrder      :: Int
@@ -97,27 +107,46 @@ childProps = ChildProps {
   , cAlignSelf  = CC.auto
 }
 
--- |Set Flexbox properties on an element.
-setProps :: ToStyle a => UI Element -> a -> UI Element
-setProps el props = el # set UI.style (toStyle props)
+order      x = childProps { cOrder      = x }
+flexGrow   x = childProps { cFlexGrow   = x }
+flexShrink x = childProps { cFlexShrink = x }
+flexBasis  x = childProps { cFlexBasis  = x }
+alignSelf  x = childProps { cAlignSelf  = x }
 
--- |Attach elements to a parent element, with given Flexbox properties applied.
-flexbox ::
+-- |Set Flexbox properties on an element.
+setProps :: ToStyle a => a -> UI Element -> UI Element
+setProps props el = el # set UI.style (toStyle props)
+
+-- |Attach elements to a parent element, applying given Flexbox properties.
+flex ::
      UI Element                 -- ^ Parent
   -> ParentProps                -- ^ Parent Flexbox properties
   -> [(UI Element, ChildProps)] -- ^ Children and respective Flexbox properties
   -> UI Element                 -- ^ Parent with attached children
-flexbox p pProps cs = do
-  p'  <- setProps p pProps
-  cs' <- mapM (uncurry setProps) cs
+flex p pProps cs = do
+  p'  <- p # setProps pProps
+  cs' <- mapM (\(c, cProps) -> c # setProps cProps) cs
   element p' #+ map element cs'
 
--- |Attach elements to a parent element with flex-direction column.
-column :: UI Element -> [UI Element] -> UI Element
-column p cs = flexbox p parentProps { pFlexDirection = CF.column } $
-  zip cs $ repeat childProps
+-- |Like 'flex' but apply default properties to the parent.
+flex_p ::
+     UI Element                 -- ^ Parent
+  -> [(UI Element, ChildProps)] -- ^ Children and respective Flexbox properties
+  -> UI Element                 -- ^ Parent with attached children
+flex_p p = flex p parentProps
 
--- |Attach elements to a parent element with default Flexbox properties.
-row :: UI Element -> [UI Element] -> UI Element
-row p cs = flexbox p parentProps $ zip cs $ repeat childProps
+-- |Like 'flex' but apply default properties to the children.
+flex_c ::
+     UI Element   -- ^ Parent
+  -> ParentProps  -- ^ Parent Flexbox properties
+  -> [UI Element] -- ^ Children
+  -> UI Element   -- ^ Parent with attached children
+flex_c p pProps cs = flex p pProps $ zip cs $ repeat childProps
+
+-- |Like 'flex' but apply default properties to the parent and children.
+flex_pc ::
+     UI Element   -- ^ Parent
+  -> [UI Element] -- ^ Children
+  -> UI Element   -- ^ Parent with attached children
+flex_pc p = flex_c p parentProps
 

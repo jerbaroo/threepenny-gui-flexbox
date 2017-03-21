@@ -1,91 +1,91 @@
 * Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]] [[https://img.shields.io/hackage/v/threepenny-gui-flexbox.svg]] [[https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly?.jpg]]
 
-  Flexbox layouts for Threepenny-gui.
+Flexbox layouts for Threepenny-gui.
 
-  This library was written following the wonderful
-  [[https://css-tricks.com/snippets/css/a-guide-to-flexbox][A Complete Guide to
-  Flexbox]] and using the equally wonderful
-  [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS domain
-  specific language.
+This library was written following the wonderful [[https://css-tricks.com/snippets/css/a-guide-to-flexbox][A Complete Guide to Flexbox]] and
+using the equally wonderful [[https://hackage.haskell.org/package/clay][Clay]] library as a CSS domain specific language.
 
   [[./example.png]]
 
 * Usage
 
-  Flexbox properties that apply to the parent element, things like
-  ~flex-direction~, are stored in a ~ParentProps~ data type.
+** Properties
 
-  Flexbox properties that apply to children elements, things like ~flex-grow~,
-  are stored in a ~ChildProps~ data type.
+Ultimately we just want to set Flexbox properties on elements, both parent and
+child elements. In CSS these properties would look like ~flex-grow: 1;~.
+
+We collect Flexbox properties that apply to the parent element, things like
+~flex-direction~, in a ~ParentProps~ data type. Flexbox properties that apply to
+child elements, things like ~flex-grow~, are collected in a ~ChildProps~ data
+type.
   
-  For both ~ParentProps~ and ~ChildProps~ we provide the standard defaults through:
+If you want ~ChildProps~ with ~flex-grow: 1;~ you can just do:
 
-  #+BEGIN_SRC Haskell
+#+BEGIN_SRC Haskell
+flexGrow 1
+#+END_SRC
+
+You can define multiple properties using record syntax:
+
+#+BEGIN_SRC Haskell
+order 1 { cflexGrow = 1, cFlexShrink = 2 }
+#+END_SRC
+
+Note that in the examples above we used ~flexGrow~ and ~order~ to return
+~ChildProps~ with given values set but also with default values set for all
+other Flexbox properties, unless record syntax is used to override a property.
+
+Some properties like ~flexGrow~ simply take an ~Int~ but others take a value
+from the ~Clay~ library. Here's an example for ~ParentProps~:
+
+#+BEGIN_SRC Haskell
+display Clay.Display.inlineFlex { pFlexWrap = Clay.Flexbox.nowrap }
+#+END_SRC
+
+If you just want ~ParentProps~ or ~ChildProps~ with default values:
+
+#+BEGIN_SRC Haskell
 parentProps :: ParentProps
-childProps :: ChildProps
-  #+END_SRC
+childProps  :: ChildProps
+#+END_SRC
   
 ** Setting Properties
 
-  You can set a property by using the defaults and over-riding a specific entry
-  using record syntax.
-  
-  Setting ~flex-grow: 2;~ which is a property for a child element:
+Once you have your properties defined you'll want to apply them to elements.
+For this you can use ~setProps~ which can be used with Threepenny's reverse
+function application operator ~#~:
 
-  #+BEGIN_SRC Haskell
-childProps { cFlexGrow = 2 }
-  #+END_SRC
-  
-  You can use Clay to set values for some of the more exotic types.
-  
-  Setting ~display: inline-flex;~ which is property for a parent element:
-  
-  #+BEGIN_SRC Haskell
-parentProps { pDisplay = Clay.Flexbox.inlineFlex }
-  #+END_SRC
+#+BEGIN_SRC Haskell
+UI.div # set UI.text "foo" # setProps (order 1)
+#+END_SRC
 
-** Full Example
+You can also convert ~ParentProps~ or ~ChildProps~ to a ~[(String, String)]~
+which is [[http://hackage.haskell.org/package/threepenny-gui/docs/src/Graphics-UI-Threepenny-Core.html#style][how Threepenny expects CSS]]. This can be done using ~toStyle~ which is
+defined in the typeclass ~ToStyle~:
 
-  Once you have your properties defined you need to apply them to elements and
-  attach the children to the parent. ~flexbox~ provides this functionality, you
-  need to pass a parent element and respective properties, and a list of
-  children elements and their respective properties.
+#+BEGIN_SRC Haskell
+UI.div # set UI.style (toStyle $ order 1)
+#+END_SRC
 
-  The example image above was produced with the below code. It attaches three
-  ~div~ s with text "foo" to the ~body~ in the ratio 1:2:1. The example can be
-  run with ~stack exec threepenny-flexbox-exe~.
+*** 'flex'
+
+We provide a utility function ~flex~ which takes both parent and child elements
+and their respective ~ParentProps~ and ~ChildProps~, applies the respective
+properties and then returns the parent element with children attached. We also
+provide variants of this function which use default properties for parent or
+children. Below is a full example demonstrating this, which produced the image
+above.
   
-  #+BEGIN_SRC Haskell
-  -- |Example of three divs using a flex-grow ratio of 1:2:1.
+#+BEGIN_SRC Haskell
+-- |Example of three divs using a flex-grow ratio of 1:2:1.
 example :: Window -> UI ()
 example w = void $
-  flexbox (getBody w) parentProps $ [grow 1, grow 2, grow 1]
+  flex_p (getBody w) $ [grow 1, grow 2, grow 1]
 
 -- |Example "foo" div and given flex-grow value.
 grow :: Int -> (UI Element, ChildProps)
-grow n = (foo, childProps { cFlexGrow = n })
+grow n = (foo, flexGrow n)
   where foo = UI.div # set UI.text "foo"
                      # set UI.style [("background-color", "#F89406"),
                                      ("margin", "8px")]
-  #+END_SRC
-
-** More Control
-
-  If you don't want to use ~flexbox~ but rather set CSS values on elements
-  yourself you can use the functions ~toStyle~ and ~setProps~.
-
-  ~ParentProps~ and ~ChildProps~ are both an instance of ~ToStyle~, defined
-  below. That means you can convert either parent properties or child properties
-  to a ~[(String, String)]~ which is [[http://hackage.haskell.org/package/threepenny-gui/docs/src/Graphics-UI-Threepenny-Core.html#style][how Threepenny expects CSS]].
-  
-  #+BEGIN_SRC Haskell
-class ToStyle a where
-toStyle :: a -> [(String, String)]
-  #+END_SRC
-
-  To save a few more characters you can use ~setProps~ to set the given
-  properties on an element.
-
-  #+BEGIN_SRC Haskell
-setProps :: ToStyle a => UI Element -> a -> UI Element
-  #+END_SRC
+#+END_SRC
