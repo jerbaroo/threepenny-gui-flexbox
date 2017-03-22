@@ -1,4 +1,4 @@
-* Threepenny-gui Flexbox [[https://travis-ci.org/barischj/threepenny-gui-flexbox.svg?branch=master]] [[https://img.shields.io/hackage/v/threepenny-gui-flexbox.svg]] [[https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly?.jpg]]
+* Threepenny-gui Flexbox [![CircleCI](https://circleci.com/gh/barischj/threepenny-gui-flexbox.svg?style=shield)](https://circleci.com/gh/barischj/threepenny-gui-flexbox) [![Hackage](https://img.shields.io/hackage/v/lens.svg)](http://hackage.haskell.org/package/threepenny-gui-flexbox) [![Stackage Nightly](https://www.stackage.org/package/threepenny-gui-flexbox/badge/nightly?.jpg)](http://stackage.org/nightly/package/threepenny-gui-flexbox) [![Stackage LTS](https://www.stackage.org/package/threepenny-gui-flexbox/badge/lts?.jpg)](http://stackage.org/lts/package/threepenny-gui-flexbox)
 
 Flexbox layouts for Threepenny-gui.
 

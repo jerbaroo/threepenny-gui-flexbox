@@ -1,5 +1,5 @@
 name:                threepenny-gui-flexbox
-version:             0.3.0.2
+version:             0.4
 synopsis:            Flexbox layouts for Threepenny-gui.
 homepage:            https://github.com/barischj/threepenny-gui-flexbox
 license:             BSD3

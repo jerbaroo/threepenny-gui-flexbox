@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/threepenny-gui-flexbox
+    docker:
+      - image: haskell
+    steps:
+      - run:
+          name: Update image
+          command: apt update; apt dist-upgrade -y; apt install -y ssh
+      - checkout
+      - run:
+          name: Build dependencies
+          command: stack setup; stack build --test --only-dependencies
+      - run:
+          name: Build package, tests, and docs, and run tests.
+          command: stack build --test --haddock --no-haddock-deps
