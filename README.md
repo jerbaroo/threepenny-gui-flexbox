@@ -10,7 +10,7 @@ wonderful
 using the equally wonderful [Clay](https://hackage.haskell.org/package/clay)
 library as a CSS domain specific language.
 
-![](./example.png)
+![](https://github.com/barischj/threepenny-gui-flexbox/blob/master/example.png)
 
 # Usage
 
