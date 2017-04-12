@@ -76,23 +76,37 @@ UI.div # set UI.style (toStyle $ order 1)
 
 ### 'flex'
 
-We provide a utility function `flex` which takes both parent and child elements
-and their respective `ParentProps` and `ChildProps`, applies the respective
-properties and then returns the parent element with children attached. We also
-provide variants of this function which use default properties for parent or
-children. Below is a full example demonstrating this, which produced the image
-above.
-  
+We provide a utility function `flex` (and a few variants thereof) which takes
+both parent and child elements and their respective `ParentProps` and
+`ChildProps`, applies the properties to the respective elements and then returns
+the parent element with children attached.
+
+Here is a full example, which produces the above image of three orange text
+boxes in ratio 1:2:1. First done without `flex_p` and then with `flex_p`.
+`flex_p` is a variant of `flex` which applies default Flexbox properties to the
+parent element.
+
 ``` Haskell
--- |Example of three divs using a flex-grow ratio of 1:2:1.
+-- |Example without 'flex_p'.
 example :: Window -> UI ()
 example w = void $
-  flex_p (getBody w) $ [grow 1, grow 2, grow 1]
+  getBody w # setFlex parentProps #+ [
+      foo # setFlex (flexGrow 1)
+    , foo # setFlex (flexGrow 2)
+    , foo # setFlex (flexGrow 1)
+    ]
 
--- |Example "foo" div and given flex-grow value.
-grow :: Int -> (UI Element, ChildProps)
-grow n = (foo, flexGrow n)
-  where foo = UI.div # set UI.text "foo"
-                     # set UI.style [("background-color", "#F89406"),
-                                     ("margin", "8px")]
+-- |Example with 'flex_p'.
+example' :: Window -> UI ()
+example' w = void $
+  flex_p (getBody w) [
+      (foo, flexGrow 1)
+    , (foo, flexGrow 2)
+    , (foo, flexGrow 1)
+    ]
+
+-- | Simple coloured 'div'.
+foo = UI.div # set UI.text "foo"
+             # set UI.style [("background-color", "#F89406"),
+                             ("margin", "8px")]
 ```

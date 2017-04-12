@@ -1,18 +1,25 @@
 module Graphics.UI.Threepenny.Ext.Flexbox (
   -- * Parent Properties
-  ParentProps (..), parentProps,
+  ParentProps (..),
 
-  -- ** Parent Property Helpers
+  -- ** Parent Property Constructors
+  parentProps,
+
   display, flexDirection, flexWrap, justifyContent, alignItems, aligContent,
- 
-  -- * Child Properties
-  ChildProps (..), childProps,
 
-  -- ** Child Property Helpers
+  -- * Child Properties
+  ChildProps (..),
+
+  -- ** Child Property Constructors
+  childProps,
+
   order, flexGrow, flexShrink, flexBasis, alignSelf,
 
   -- * Core Functions
-  ToStyle (..), setProps, flex, flex_p, flex_c, flex_pc 
+  ToStyle (..), setFlex,
+
+  -- * Useful Abstractions
+  flex, flex_p, flex_c, flex_pc
   ) where
 
 import qualified Clay.Common                 as CC
@@ -114,8 +121,8 @@ flexBasis  x = childProps { cFlexBasis  = x }
 alignSelf  x = childProps { cAlignSelf  = x }
 
 -- |Set Flexbox properties on an element.
-setProps :: ToStyle a => a -> UI Element -> UI Element
-setProps props el = el # set UI.style (toStyle props)
+setFlex :: ToStyle a => a -> UI Element -> UI Element
+setFlex props el = el # set UI.style (toStyle props)
 
 -- |Attach elements to a parent element, applying given Flexbox properties.
 flex ::
@@ -124,8 +131,8 @@ flex ::
   -> [(UI Element, ChildProps)] -- ^ Children and respective Flexbox properties
   -> UI Element                 -- ^ Parent with attached children
 flex p pProps cs = do
-  p'  <- p # setProps pProps
-  cs' <- mapM (\(c, cProps) -> c # setProps cProps) cs
+  p'  <- p # setFlex pProps
+  cs' <- mapM (\(c, cProps) -> c # setFlex cProps) cs
   element p' #+ map element cs'
 
 -- |Like 'flex' but apply default properties to the parent.

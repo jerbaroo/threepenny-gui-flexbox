@@ -1,12 +1,12 @@
 name:                threepenny-gui-flexbox
-version:             0.4.0.1
+version:             0.4.1
 synopsis:            Flexbox layouts for Threepenny-gui.
 homepage:            https://github.com/barischj/threepenny-gui-flexbox
 license:             BSD3
 license-file:        LICENSE
-author:              Jeremy Barisch-Rooney
+author:              Jeremy Barisch Rooney
 maintainer:          barischj@tcd.ie
-copyright:           2017 Jeremy Barisch-Rooney
+copyright:           2017 Jeremy Barisch Rooney
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
