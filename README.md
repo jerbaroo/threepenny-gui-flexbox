@@ -57,11 +57,11 @@ childProps  :: ChildProps
 ## Setting Properties
 
 Once you have your properties defined you'll want to apply them to elements. For
-this you can use `setProps` which can be used with Threepenny's reverse function
+this you can use `setFlex` which can be used with Threepenny's reverse function
 application operator `#`:
 
 ``` Haskell
-UI.div # set UI.text "foo" # setProps (order 1)
+UI.div # set UI.text "foo" # setFlex (flexGrow 1)
 ```
 
 You can also convert `ParentProps` or `ChildProps` to a `[(String, String)]`
