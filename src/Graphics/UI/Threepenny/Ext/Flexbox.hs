@@ -43,7 +43,7 @@ class ToStyle a where
 
 -- |Convert a Clay Property to Threepnny style.
 instance ToStyle Rule where
-  toStyle (Property k v) =
+  toStyle (Property [] k v) =
     [(unpack $ unPlain $ unKeys k, unpack $ unPlain $ unValue v)]
 
 -- |Properties for a parent.
