@@ -30,21 +30,17 @@ If you want `ChildProps` with `flex-grow: 1;` you can just do:
 flexGrow 1
 ```
 
-You can define multiple properties using record syntax:
+You can define multiple properties using `(<>)`:
 
 ``` Haskell
-order 1 { cflexGrow = 1, cFlexShrink = 2 }
+order 1 <> flexGrow 1 <> flexShrink 2
 ```
-
-Note that in the examples above we used `flexGrow` and `order` to return
-`ChildProps` with given values set but also with default values set for all
-other Flexbox properties, unless record syntax is used to override a property.
 
 Some properties like `flexGrow` simply take an `Int` but others take a value
 from the `Clay` library. Here's an example for `ParentProps`:
 
 ``` Haskell
-display Clay.Display.inlineFlex { pFlexWrap = Clay.Flexbox.nowrap }
+display Clay.Display.inlineFlex <> flexWrap Clay.Flexbox.nowrap
 ```
 
 If you just want `ParentProps` or `ChildProps` with default values:
@@ -64,11 +60,29 @@ application operator `#`:
 UI.div # set UI.text "foo" # setFlex (flexGrow 1)
 ```
 
+Note that `setFlex` will set any properties you don't specify explictly to the
+default values from `parentProps` or `childProps`. If that is undesirable (for
+instance, in case you have already used `setFlex` elsewhere to set several
+properties and only want to change a few of them), you can instead use
+`modifyFlex`, which leaves unspecified properties unchanged:
+
+``` Haskell
+myRow = UI.div # setFlex (
+    flexDirection Clay.Flexbox.row
+    <> flexWrap Clay.Flexbox.wrap
+    <> justifyContent Clay.Flexbox.spaceBetween
+    <> alignItems Clay.Common.baseline
+  )
+
+-- Elsewhere:
+myRow # modifyFlex (alignItems Clay.Common.center)
+```
+
 You can also convert `ParentProps` or `ChildProps` to a `[(String, String)]`
 which
 is
 [how Threepenny expects CSS](http://hackage.haskell.org/package/threepenny-gui/docs/src/Graphics-UI-Threepenny-Core.html#style).
-This can be done using `toStyle` which is defined in the typeclass `ToStyle`:
+This can be done using `toStyle`:
 
 ``` Haskell
 UI.div # set UI.style (toStyle $ order 1)
@@ -78,8 +92,8 @@ UI.div # set UI.style (toStyle $ order 1)
 
 We provide a utility function `flex` (and a few variants thereof) which takes
 both parent and child elements and their respective `ParentProps` and
-`ChildProps`, applies the properties to the respective elements and then returns
-the parent element with children attached.
+`ChildProps`, applies the properties through `setFlex` to the respective
+elements and then returns the parent element with children attached.
 
 Here is a full example, which produces the above image of three orange text
 boxes in ratio 1:2:1. First done without `flex_p` and then with `flex_p`.
