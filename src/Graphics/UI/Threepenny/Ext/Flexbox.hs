@@ -45,9 +45,10 @@ import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core hiding (column, row)
 
 -- $clay-values
--- The available values for the Clay argument types can be found in
--- their documentation by drilling down into their instance lists and
--- looking for the methods therein.
+-- The available values for the Clay argument types, if not listed
+-- next to documentation entries for said types, can often be found by
+-- drilling down into their instance lists and looking for the methods
+-- therein.
 
 -- | Bundles of flexbox properties that can be converted to Threepenny
 -- style property-value pairs.
@@ -112,7 +113,9 @@ instance ToStyle ParentProps where
       , CF.alignContent   <$> pAlignContent   p
     ]
 
--- | Default flexbox properties for a parent.
+-- | Default flexbox properties for a parent. Amounts to setting
+-- @display: flex@ plus the CSS specification defaults for the other
+-- flex container properties.
 parentProps :: ParentProps
 parentProps = ParentProps {
     pDisplay        = pure CD.flex
@@ -185,10 +188,11 @@ instance ToStyle ChildProps where
       , CF.alignSelf  <$> cAlignSelf  c
     ]
 
--- | Default flexbox properties for a child.
+-- | Default flexbox properties for a child. Amounts to setting the CSS
+-- defaults for flex item properties.
 childProps :: ChildProps
 childProps = ChildProps {
-    cOrder      = pure 1
+    cOrder      = pure 0
   , cFlexGrow   = pure 0
   , cFlexShrink = pure 1
   , cFlexBasis  = pure CC.auto
