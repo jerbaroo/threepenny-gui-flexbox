@@ -7,7 +7,7 @@ module Graphics.UI.Threepenny.Ext.Flexbox (
   -- ** Parent Property Constructors
   --
   -- $clay-values
-  display, flexDirection, flexWrap, justifyContent, alignItems, aligContent,
+  display, flexDirection, flexWrap, justifyContent, alignItems, alignContent,
 
   -- * Child Properties
   ChildProps (..),
@@ -142,8 +142,8 @@ justifyContent x = mempty { pJustifyContent = pure x }
 alignItems :: AlignItemsValue -> ParentProps
 alignItems x = mempty { pAlignItems = pure x }
 
-aligContent :: AlignContentValue -> ParentProps
-aligContent x = mempty { pAlignContent = pure x }
+alignContent :: AlignContentValue -> ParentProps
+alignContent x = mempty { pAlignContent = pure x }
 
 -- | Properties for a flexbox child.
 data ChildProps = ChildProps {
