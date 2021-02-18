@@ -2,17 +2,21 @@ module Graphics.UI.Threepenny.Ext.Flexbox (
   -- * Parent Properties
   ParentProps (..),
 
-  -- ** Parent Property Constructors
   parentProps,
 
+  -- ** Parent Property Constructors
+  --
+  -- $clay-values
   display, flexDirection, flexWrap, justifyContent, alignItems, aligContent,
 
   -- * Child Properties
   ChildProps (..),
 
-  -- ** Child Property Constructors
   childProps,
 
+  -- ** Child Property Constructors
+  --
+  -- $clay-values
   order, flexGrow, flexShrink, flexBasis, alignSelf,
 
   -- * Core Functions
@@ -40,21 +44,31 @@ import           Data.Maybe                  (mapMaybe)
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core hiding (column, row)
 
--- |Convert to Threepenny style.
+-- $clay-values
+-- The available values for the Clay argument types can be found in
+-- their documentation by drilling down into their instance lists and
+-- looking for the methods therein.
+
+-- | Bundles of flexbox properties that can be converted to Threepenny
+-- style property-value pairs.
 class ToStyle a where
   toStyle :: a -> [(String, String)]
 
--- | A class for bundles of Flexbox properties suitable for application
---   to 'Elements'.
+-- | Bundles of flexbox properties that can be applied to an 'Element'
+-- through 'setFlex' and 'modifyFlex'.
 class (ToStyle a, Semigroup a) => FlexProps a where
+  -- | Defaults to use when setting properties with unspecified values.
   defaultFlexProps :: a
 
--- |Convert a Clay Property to Threepnny style.
+-- | Note that 'toStyle' for this instance is only defined for the
+-- 'Property' constructor of 'Rule'.
 instance ToStyle Rule where
   toStyle (Property [] k v) =
     [(unpack $ unPlain $ unKeys k, unpack $ unPlain $ unValue v)]
+  toStyle _                 = error
+    "Graphics.UI.Threepenny.Ext.Flexbox.toStyle @Rule: not a Property"
 
--- |Properties for a parent.
+-- | Properties for a flexbox parent.
 data ParentProps = ParentProps {
     pDisplay        :: Last Display
   , pFlexDirection  :: Last FlexDirection
@@ -64,6 +78,9 @@ data ParentProps = ParentProps {
   , pAlignContent   :: Last AlignContentValue
 }
 
+-- | 'Data.Semigroup.<>' combines properties through the 'Last' monoid:
+-- if a property is specified by both arguments, choose the value from
+-- the second one.
 instance Semigroup ParentProps where
   p1 <> p2 = ParentProps {
       pDisplay        = pDisplay p1        <> pDisplay p2
@@ -74,6 +91,7 @@ instance Semigroup ParentProps where
     , pAlignContent   = pAlignContent p1   <> pAlignContent p2
   }
 
+-- | 'mempty' specifies no properties.
 instance Monoid ParentProps where
   mempty = ParentProps {
       pDisplay        = mempty
@@ -84,7 +102,6 @@ instance Monoid ParentProps where
     , pAlignContent   = mempty
   }
 
--- |Convert parent properties to Threepenny style.
 instance ToStyle ParentProps where
   toStyle p = concatMap (toStyle <=< runS) $ mapMaybe getLast $ [
         CD.display        <$> pDisplay        p
@@ -95,7 +112,7 @@ instance ToStyle ParentProps where
       , CF.alignContent   <$> pAlignContent   p
     ]
 
--- |Default properties for a parent.
+-- | Default flexbox properties for a parent.
 parentProps :: ParentProps
 parentProps = ParentProps {
     pDisplay        = pure CD.flex
@@ -106,17 +123,29 @@ parentProps = ParentProps {
   , pAlignContent   = pure CF.stretch
 }
 
+-- | Gets defaults from 'parentProps'.
 instance FlexProps ParentProps where
   defaultFlexProps = parentProps
 
-display        x = mempty { pDisplay        = pure x }
-flexDirection  x = mempty { pFlexDirection  = pure x }
-flexWrap       x = mempty { pFlexWrap       = pure x }
-justifyContent x = mempty { pJustifyContent = pure x }
-alignItems     x = mempty { pAlignItems     = pure x }
-aligContent    x = mempty { pAlignContent   = pure x }
+display :: Display -> ParentProps
+display x = mempty { pDisplay = pure x }
 
--- |Properties for a child.
+flexDirection :: FlexDirection -> ParentProps
+flexDirection  x = mempty { pFlexDirection = pure x }
+
+flexWrap :: FlexWrap -> ParentProps
+flexWrap x = mempty { pFlexWrap = pure x }
+
+justifyContent :: JustifyContentValue -> ParentProps
+justifyContent x = mempty { pJustifyContent = pure x }
+
+alignItems :: AlignItemsValue -> ParentProps
+alignItems x = mempty { pAlignItems = pure x }
+
+aligContent :: AlignContentValue -> ParentProps
+aligContent x = mempty { pAlignContent = pure x }
+
+-- | Properties for a flexbox child.
 data ChildProps = ChildProps {
     cOrder      :: Last Int
   , cFlexGrow   :: Last Int
@@ -125,6 +154,9 @@ data ChildProps = ChildProps {
   , cAlignSelf  :: Last AlignSelfValue
 }
 
+-- | 'Data.Semigroup.<>' combines properties through the 'Last' monoid:
+-- if a property is specified by both arguments, choose the value from
+-- the second one.
 instance Semigroup ChildProps where
   c1 <> c2 = ChildProps {
       cOrder      = cOrder c1      <> cOrder c2
@@ -134,6 +166,7 @@ instance Semigroup ChildProps where
     , cAlignSelf  = cAlignSelf c1  <> cAlignSelf c2
   }
 
+-- | 'mempty' specifies no properties.
 instance Monoid ChildProps where
   mempty = ChildProps {
       cOrder      = mempty
@@ -143,7 +176,6 @@ instance Monoid ChildProps where
     , cAlignSelf  = mempty
   }
 
--- |Convert child properties to Threepenny style.
 instance ToStyle ChildProps where
   toStyle c = concatMap (toStyle <=< runS) $ mapMaybe getLast $ [
         CF.order      <$> cOrder      c
@@ -153,7 +185,7 @@ instance ToStyle ChildProps where
       , CF.alignSelf  <$> cAlignSelf  c
     ]
 
--- |Default properties for a child.
+-- | Default flexbox properties for a child.
 childProps :: ChildProps
 childProps = ChildProps {
     cOrder      = pure 1
@@ -163,26 +195,36 @@ childProps = ChildProps {
   , cAlignSelf  = pure CC.auto
 }
 
+-- | Gets defaults from 'childProps'.
 instance FlexProps ChildProps where
   defaultFlexProps = childProps
 
-order      x = mempty { cOrder      = pure x }
-flexGrow   x = mempty { cFlexGrow   = pure x }
-flexShrink x = mempty { cFlexShrink = pure x }
-flexBasis  x = mempty { cFlexBasis  = pure x }
-alignSelf  x = mempty { cAlignSelf  = pure x }
+order :: Int -> ChildProps
+order x = mempty { cOrder = pure x }
 
--- | Set Flexbox properties on an element. Unspecified properties are
---   set to the corresponding 'defaultFlexProps' field values.
+flexGrow :: Int -> ChildProps
+flexGrow x = mempty { cFlexGrow = pure x }
+
+flexShrink :: Int -> ChildProps
+flexShrink x = mempty { cFlexShrink = pure x }
+
+flexBasis :: Size LengthUnit -> ChildProps
+flexBasis x = mempty { cFlexBasis = pure x }
+
+alignSelf :: AlignSelfValue -> ChildProps
+alignSelf x = mempty { cAlignSelf = pure x }
+
+-- | Sets flexbox properties on an 'Element'. Unspecified properties are
+-- set to the corresponding 'defaultFlexProps' field values.
 setFlex :: FlexProps a => a -> UI Element -> UI Element
 setFlex props = modifyFlex (defaultFlexProps <> props)
 
--- | Modify Flexbox properties on an element. Unspecified properties
---   are left unchanged.
+-- | Modifies flexbox properties on an 'Element'. Unspecified properties
+-- are left unchanged.
 modifyFlex :: FlexProps a => a -> UI Element -> UI Element
 modifyFlex props el = el # set UI.style (toStyle props)
 
--- |Attach elements to a parent element, applying given Flexbox properties.
+-- | Attach 'Element's to a parent element, applying given flexbox properties.
 flex ::
      UI Element                 -- ^ Parent
   -> ParentProps                -- ^ Parent Flexbox properties
@@ -193,22 +235,23 @@ flex p pProps cs = do
   cs' <- mapM (\(c, cProps) -> c # setFlex cProps) cs
   element p' #+ map element cs'
 
--- |Like 'flex' but apply default properties to the parent.
+-- | Like 'flex', but applies default properties to the parent.
 flex_p ::
      UI Element                 -- ^ Parent
-  -> [(UI Element, ChildProps)] -- ^ Children and respective Flexbox properties
+  -> [(UI Element, ChildProps)] -- ^ Children and respective flexbox properties
   -> UI Element                 -- ^ Parent with attached children
 flex_p p = flex p parentProps
 
--- |Like 'flex' but apply default properties to the children.
+-- | Like 'flex', but applies default properties to the children.
 flex_c ::
      UI Element   -- ^ Parent
-  -> ParentProps  -- ^ Parent Flexbox properties
+  -> ParentProps  -- ^ Parent flexbox properties
   -> [UI Element] -- ^ Children
   -> UI Element   -- ^ Parent with attached children
 flex_c p pProps cs = flex p pProps $ zip cs $ repeat childProps
 
--- |Like 'flex' but apply default properties to the parent and children.
+-- | Like 'flex', but applies default properties to the parent and
+-- children.
 flex_pc ::
      UI Element   -- ^ Parent
   -> [UI Element] -- ^ Children
